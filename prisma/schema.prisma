@@ -7,14 +7,40 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Post {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  title     String
-  published Boolean  @default(false)
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
+model Inventory {
+  id            String     @id @default(cuid())
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  dateIn        DateTime
+  dateExpired   DateTime
+  storageMethod String
+  ingredientId  String
+  ingredient    Ingredient @relation(fields: [ingredientId], references: [id])
+  userId        String
+  user          User       @relation(fields: [userId], references: [id])
+}
+
+model Ingredient {
+  id             String      @id @default(cuid())
+  name           String
+  category       String
+  roomTemp       Int?
+  fridgeOpened   Int?
+  fridgeUnopened Int?
+  freezer        Int?
+  inventoryId    String
+  users          Inventory[]
+}
+
+model User {
+  id            String      @id @default(cuid())
+  name          String?
+  email         String?     @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  ingredients   Inventory[]
 }
 
 model Account {
@@ -42,17 +68,6 @@ model Session {
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
-  Post          Post[]
 }
 
 model VerificationToken {
