@@ -14,21 +14,20 @@ model Inventory {
   dateIn        DateTime
   dateExpired   DateTime
   storageMethod String
-  ingredientId  String
+  ingredientId  Int
   ingredient    Ingredient @relation(fields: [ingredientId], references: [id])
   userId        String
   user          User       @relation(fields: [userId], references: [id])
 }
 
 model Ingredient {
-  id             String      @id @default(cuid())
+  id             Int         @id @default(autoincrement())
   name           String
   category       String
   roomTemp       Int?
   fridgeOpened   Int?
   fridgeUnopened Int?
   freezer        Int?
-  inventoryId    String
   users          Inventory[]
 }
 
